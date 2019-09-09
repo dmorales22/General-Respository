@@ -1,0 +1,252 @@
+import java.io.*;
+import java.util.*;
+
+public class lab2 {
+
+    //This method strips the text file line by line into a string array, and parses the string to integers. Then the integers are
+    //assigned into a 2D array using a nested for loop. Exceptions are used here to make sure the text file is there and in the
+    //correct format. It also checks if the text file has the correct 9 by 9 format and has no other characters in the text.
+    //It returns the 2D array we need for the rest of the program. 
+    public static int[][] readSudoku(String filename) throws FileNotFoundException, IOException {
+	try {
+	    FileReader fr = new FileReader(filename);
+	    FileReader nr = new FileReader(filename); //Another filereader needs to be declared just to read the number of lines of the text. 
+	    BufferedReader textReader = new BufferedReader(fr);
+	    BufferedReader lineCounter = new BufferedReader(nr);
+
+	    //Declares the varables for the rest of the method. 
+	    int[][] sudokuArray = new int[9][9];
+	    int i;
+	    int j;
+	    int lCounter = 0;
+	    String[] puzzleString;
+
+	    //This while loop counts the lines of the text. 
+	    while (lineCounter.readLine() != null) {
+		lCounter++;
+	    }
+
+	    //This if statement checks if there is more nine lines in the file. Then prints and exits out of the program if it is. 
+	    if (lCounter > 9) {
+		System.out.println("");
+		System.out.println("Puzzle is not in correct format. Make sure it's 9 by 9.");
+		System.exit(0);
+	    }
+
+	    //The main nested for loop that reads the text file, checks characters, checks line lengths, parses the integers, and
+	    //assigns integers into a 2D array. 
+	    for (i = 0; i < 9; i++) {
+		puzzleString = textReader.readLine().split(" "); //Splits elements by spaces found in the text. 
+		for (j = 0; j < 9; j++) {
+		    if (puzzleString[j].matches("[a-zA-Z/-/]+")) { //Detects any letter or character in the text, and exits out if found. 
+			System.out.println("Sorry there's letters in the puzzle. Try again.");
+			System.exit(0);
+		    }
+		    if (puzzleString.length > 9 || puzzleString.length < 9) { //Detects if row's elements are greater than 9. 
+			System.out.println("Puzzle is not in correct format. Make sure it's 9 by 9.");
+			System.exit(0);
+		    }
+		    if (puzzleString[j].matches("\\d+")) { //Parses the string into integers, and assigns it into the 2D array. 
+			sudokuArray[i][j] = Integer.parseInt(puzzleString[j]);
+		
+		    }
+		}
+	    }
+
+	    //Prints a successful read and returns the 2D array.
+	    System.out.println("Game is loaded!");
+	    return sudokuArray; 
+	}
+	
+	catch(FileNotFoundException fnfE) { //This exception prints message if file inputted not found. 
+	    throw new FileNotFoundException("File was not found. Make sure it's typed correctly.");
+	}
+
+	catch(IOException ioEx) {
+	    throw new FileNotFoundException("I/O exception. Make sure the text file is readable.");
+	}
+	
+    }
+
+    //This method prints the puzzle in a nice format. 
+    public static void printSudoku(int[][] sudokuArray) {
+	System.out.println();
+	int i;
+	int j;
+	
+	for (i = 0; i < 9; i++) {
+	    for (j = 0; j < 9; j ++) {
+		if (sudokuArray[i][j] == 0) {
+		    System.out.print(". ");
+		}
+		else {
+		    System.out.print(sudokuArray[i][j] + " ");
+		}
+		if (j == 2 || j == 5) {
+		    System.out.print("| ");
+		}
+	    }
+	    
+	    System.out.println();
+	    
+	    if (i == 2 || i == 5) {
+		System.out.println("----- + ----- + -----");
+	    }
+	}
+    }
+    
+    //The method checkSudoku checks the 2D array to see if it complies with the rules of Sudoku by checking columns, rows, and
+    //the 3 x 3 regions of the array. It returns a boolean (true or false). 
+    public static boolean checkSudoku(int[][] sudokuArray) {
+	int i;
+	int j;
+	int k;
+	int colCounter;
+	int rowCounter;
+	
+        //Checks zeros by running a nested for loop through the 2D array. Runs on an if statement, and returns false if zero 
+	//or a negative value is detected. It also detects values larger than 9. 	
+	for (i = 0; i < 9; i++) {
+	    for (j = 0; j < 9; j++) {
+		if (sudokuArray[i][j] == 0) {
+		    System.out.println("");
+		    System.out.println("Puzzle is not complete (still has zeros) or has illegal values (negative values).");
+		    return false;
+		}
+		if (sudokuArray[i][j] > 9) {
+		    System.out.println("");
+		    System.out.println("You have a value that is bigger than 9 in the puzzle.");
+		    return false;
+		}
+	    }
+	}
+
+	//Checks columns by running a nested for loop through the 2D array by comparing the values of 1 through 9 to every column
+	//of the array. A value is recorded through colCounter each time a certain number is detected in that that row. 
+	//If the same value is counted more than twice, then it returns false according the rules of Sudoku.	
+	for (i = 0; i < 9; i++) { // i = to column number (0-8).
+	    for (j = 0 ; j < 9; j++) { // j = to value (1-9) being compared to in the loop. 
+		colCounter = 0; 
+		for (k = 0; k < 9; k++) { // k = the values of that column.
+		    if (sudokuArray[k][i] == j + 1) {
+			colCounter++;
+		    }
+		    if (colCounter >= 2) { //If a value is counted more than twice in a column. 
+			return false;
+		    }
+		}
+	    }
+	}
+	
+	
+	//Checks rows by running a nested for loop through the 2D array by comparing the values of 1 through 9 to every rows
+	//of the array. A counter is recorded through rowCounter each time a certain number is detected in that that row. 
+	//If the same value is counted more than twice, then it returns false according the rules of Sudoku.
+	for (i = 0; i < 9; i++) { // i = to row number (0-8).
+	    for (j = 0; j < 9; j++) { // j = to value (1-9) being compared to in the loop. 
+		rowCounter = 0;
+		for (k = 0; k < 9; k++) { // k = the values of that row.
+		    if (sudokuArray[i][k] == j + 1) {
+			rowCounter++;
+		    }
+		    if (rowCounter >= 2) { //If a value is counted more than twice in a row.
+			return false;
+		    }
+		}
+	    }
+	}
+	
+	//Checks 3 x 3 blocks by running a nested for loop in each coorsponding 3 x 3 region. In the same way in the for loops above,
+	//each 3 x 3 region values are compared through 1-9. If the same value is counted twice in that 3 x 3 region, then it
+	//returns false. The counter restarts after every if statement.  
+        int blockCounter = 0;	
+	for (i = 0; i < 3; i++) { //i = column number in that 3 x 3 region.
+	    for (j = 0; j < 9; j ++) { // j = values of 1 - 9 that are being compared to in the loop. 
+		for (k = 0; k < 3; k++) { // k = the values in the row of that 3 x 3 region. 
+		    if (sudokuArray[i][k] == j + 1) {  //Here we are looking at the first 3 x 3 region. It checks if the same value
+			blockCounter++;                //is counted twice in that region. The same is done for the other if statements.
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0;
+		    if (sudokuArray[i + 3][k] == j + 1) { //We can change the region where the loop counts by adding 3 or 6
+			blockCounter++;                   //in i and k. 
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0;
+		    if (sudokuArray[i + 6][k] == j + 1) {
+			blockCounter++;
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0;
+		    if (sudokuArray[i][k + 3] == j + 1) {
+			blockCounter++;
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0;
+		    if (sudokuArray[i][k + 6] == j + 1) {
+			blockCounter++;
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0; 
+		    if (sudokuArray[i + 3][k + 3] == j + 1) {
+			blockCounter++;
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0; 
+		    if (sudokuArray[i + 6][k + 3] == j + 1) {
+			blockCounter++;
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		    blockCounter = 0;
+		    if (sudokuArray[i + 6][k + 6] == j + 1) {
+			blockCounter++;
+			if (blockCounter >= 2) {
+			    return false;
+			}
+		    }
+		}
+	    }
+	}
+      
+	return true; //Returns true if it passes through all the tests above. 
+    }
+    //This method just gets the boolean value returned in checkedSudoku, and prints if you won or lost using if statements. 
+    public static void resultSudoku(boolean result) {
+	if (result) {
+	    System.out.println("");
+	    System.out.println("Congrats. You solved the puzzle. :D");
+	}
+	else if (!result) {
+	    System.out.println("");
+	    System.out.println("The puzzle is wrong. Check it again.");
+	}
+    }
+
+
+    //Main just executes the methods above.
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+	int[][] sudokuArray = new int[9][9]; //An empty 2D array is declared to be assigned with the returned 2D array from readSudoku.
+        sudokuArray = readSudoku(args[0]); //Assigns empty array with an array returned from readSudoku.
+
+	printSudoku(sudokuArray); //Prints out the puzzle. 
+	boolean result = checkSudoku(sudokuArray); //Assigns an boolean value from the return boolean in checkSudoku. 
+
+	resultSudoku(result); //Finally, prints outs the final result. 
+	
+    }
+
+}
