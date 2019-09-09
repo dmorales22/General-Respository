@@ -1,0 +1,191 @@
+/*****************************************
+ * CS1101: Spring 2018
+ * Lab 11: due Wednesday April, 4
+ * Author: David Morales
+ *****************************************/
+
+import java.io.*;
+import java.util.*;
+
+public class myIO {
+
+    /* YOU ARE NOT TO MODIFY THE FOLLOWING METHOD:                             
+     * Please see below, in the first method of your lab, how this method is used
+     */
+    public static int[] dimensionsFile(String filename) throws FileNotFoundException, IOException  {
+        int[] dimensions = new int[2]; // number of lines and number of grades per line
+        FileReader fr = new FileReader(filename);
+        BufferedReader textReader = new BufferedReader(fr);
+
+        int counter = 0;
+        while (textReader.ready()) { 
+            if (counter == 0)
+                // the next line counts the number of elements there are on each line (since all lines have the same amount of info)
+                dimensions[1] = textReader.readLine().split(" ").length;
+            else textReader.readLine(); // once we have the number of elements per line, no need to recount it
+            // the next line keeps track of the number of lines so far: once out of the while loop, we will know how many lines there are in the file
+            dimensions[0]++;
+        }
+        
+        textReader.close();
+        // array of exactly 2 elements: dimensions[0] is the number of grades per line + 2 (for the first and last name); dimensions[1] is the number of lines in the file
+        return dimensions; 
+    }
+    
+    /* YOUR LAB STARTS BELOW THIS LINE: PLEASE FOLLOW INSTRUCTIONS              */
+    /****************************************************************************
+     * Activity 2:
+     * This method takes the name of a file as input.
+      * It reads a file formatted like students.txt (provided to you):
+     * This file contains several lines: each line starts with the name of 
+     * a student (last followed by first)
+     * and continues with a list of their grades
+     * Each line contains the same number of grades
+     * You have to create one array from it:
+     * an array of integer grades (2D array: n lines and p columns, p being the number of grades per student)
+     ****************************************************************************/
+    // The following method is the one you have to complete. 
+    // The comments in the body of the method help guide you to implement it, telling you the order of concerns
+    public static int[][] readGradesFromFile(String filename) throws FileNotFoundException, IOException {
+        // We give you the start of the code. 
+        
+        // create the 2D array
+        int[] size = dimensionsFile(filename);
+        int[][] grades = new int[size[0]][size[1]];
+	
+        FileReader fr = new FileReader(filename);
+        BufferedReader textReader = new BufferedReader(fr);
+	int[][] newGrades = new int[size[0]][4];
+	int counter;
+       
+        // read all lines, one at a time: a for loop would be appropriate since you know the number of lines
+        // to do this: you need to open the file and prepare it to be read
+	for (int i = 0; i < size[0]; i++) {
+	    String[] currentLine = textReader.readLine().split(" ");
+	    counter = 0;
+	    for (int j = 0; j < size[1]; j++) {
+		if (currentLine[j].matches("\\d+")) {
+		    newGrades[i][counter] = Integer.parseInt(currentLine[j]);
+		    counter++;
+	       	    }
+	    }
+	}
+	    
+        // within the for loop, as you read each line, you extract the grades and store them in your array
+	 
+        return newGrades;
+    }    
+    
+    
+    /****************************************************************************
+     * Activity 2: PART OF THIS METHOD IS GIVEN TO YOU
+     * This method takes a 2D array A as a parameter
+     * and computes the averages of each row and each column
+     * This method returns a 1D array of all the averages. This 1D array has the
+     * following size: number of columns + number of rows.
+     * This method needs to use two submethods: these are the methods you have to write:
+     *  1/ averageAtGivenRow(int[][] A, int line): which computes the average of the integers
+     *          on row #line of 2D array A
+     *          This method should use ONE for loop
+     *  2/ averageAtGivenColumn(int[][] A, int column): which computes the average of
+     *          the integers in column #column of 2D array A
+     *          This method should use ONE for loop
+     *  BONUS: write this second method also as a recursive method 
+     *          in this case, use the following signature: averageAtGivenColumnR(int[][] A, int column, int startIndex)
+     *          see below
+     ******************************************************************************/
+    public static double[] computeAverages(int[][] A) {
+        double[] result = new double[A.length + A[0].length];
+        for (int i = 0; i < A[0].length; i++) {
+            result[i] = averageAtGivenRow(A, i);
+        }
+        for (int i = 0; i < A[0].length; i++) {
+            result[i + A[0].length] = averageAtGivenColumn(A, i);
+            // or: result[i+A.length]=averageAtGivenColumnR(A,j);
+        } 
+        return result;
+    }
+    
+    /*  1/ averageAtGivenRow(int[][] A, int line): which computes the average of the integers
+     *          on row #line of 2D array A
+     *          This method should use ONE for loop 
+     */
+    public static double averageAtGivenRow(int[][] A, int line) {
+	double b = 0;
+        for (int i = 0; i < A[0].length; i++) {
+		b += A[line][i];
+	}
+	double avgRow = b / A[0].length;
+       
+        return avgRow; // to be modified: this line is here just so that the code compiles.
+    }
+    
+    /*  2/ averageAtGivenColumn(int[][] A, int column): which computes the average of
+     *          the integers in column #column of 2D array A
+     *          This method should use ONE for loop 
+     */
+    public static double averageAtGivenColumn(int[][] A, int line) {
+	double b = 0;
+        for (int i = 0; i < A.length; i++) {
+	    b += A[i][line];
+	}
+	double avgCol = b / A.length;
+  
+        return avgCol; // to be modified: this line is here just so that the code compiles.
+    }
+    
+         ;
+    /*  BONUS: write this method as a recursive method 
+     *      in this case, use the following signature: averageAtGivenColumn(int[][] A, int column, int startIndex)
+     */
+    /* public static double averageAtGivenColumnR(int[][] A, int column, int startIndex) {
+       if (column - 1 >= A[0].length) { // here we get rid of the case where the column is out of bounds
+            System.out.println("There is no grade at this column");
+            return 0;
+        } else { // now if the column number is a valid column number:
+           if (startIndex >= A.length) return 0; // if the startIndex is out of A's bounds, then return 0
+            // else: COMPLETE HERE WITH YOUR OWN CODE --> here, this is what you do when startIndex is correct
+           else {
+                // complete the following instruction: return ... + averageAtGivenColumnR(A,column,...);    
+               return 0; // here only as a place holder: please remove this line and modify the above line
+           }
+        }    
+        
+	} */
+    /****************************************************************************
+     * Activity 2: 
+     * This method takes a 1D array B of doubles and a filename.
+     * It computes the maximum value in B and writes it in the file named filename. 
+     * It does not return anything 
+     ******************************************************************************/
+    public static void writeMaxToFile(double[] B, String filename) throws FileNotFoundException {
+	double maxValue = 0;
+	for (int i = 0; i < B.length; i++) {
+	    if (maxValue < B[i]) {
+		maxValue = B[i];
+	    }
+	}
+         
+	PrintWriter writer = new PrintWriter(filename);
+	writer.print(maxValue);
+	writer.close();
+       
+    }
+    
+     /****************************************************************************
+     * Main method in which the above methods are tested 
+     * You DO NOT HAVE to modify it
+     ****************************************************************************/
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        
+        int[] dimensions = dimensionsFile("students.txt");
+        System.out.println("dimensions: " + dimensions[0] + ", " + dimensions[1]);
+        int[][] grades = readGradesFromFile("students.txt");
+        System.out.println("number of lines: " + grades.length);
+        System.out.println("number of grades per line: " + grades[0].length);
+    
+        double[] averages = computeAverages(grades);
+        writeMaxToFile(averages, "newstudents.txt");
+    }
+
+}

@@ -1,0 +1,7 @@
+Diner Dylan 34 76 99 100 0
+Basillas Bertha 98 96 78 89 0
+Aranca Alberto 74 90 99 45 0
+Estacion Esther 87 90 76 101 0
+Castillo Carlos 76 45 67 86 0
+David Morales 100 100 100 100 0
+Angel Garcia 90 90 90 90 0
