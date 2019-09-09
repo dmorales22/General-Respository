@@ -1,0 +1,20 @@
+public class MountainBike extends Bike {
+
+    private String uL;
+    private int wS;
+
+    public String getuserLevel() {
+	return this.uL;
+    }
+    public int getWheelSize() {
+	return this.wS;
+    }
+    
+    public void setuserLevel(String userLevel) {
+	this.uL = userLevel; 
+    }
+    public void setWheelSize(int wheelSize) {
+	this.wS = wheelSize;
+    }
+
+}

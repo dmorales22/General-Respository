@@ -1,0 +1,3 @@
+Mountain Bike,   Model 472d,  $-300,    $800,  green,   4, 20-56, Beginner, 19 
+Mountain Bike,   Model 472d,  $300,    $800,    blue,   6, 12-19, Beginner, 19
+City Bike,   Model C123,  $400,    $1000,   orange, 7, 15-85, 2, Dutch

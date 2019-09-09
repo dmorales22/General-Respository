@@ -1,0 +1,19 @@
+public class RoadBike extends Bike {
+
+    private int ng;
+    private double nw;
+    
+    public void setGears(int numGears) {
+	ng = numGears; 
+    }
+    public void setWeight(double numWeight) {
+	nw = numWeight;
+    }
+    public int getGears() {
+	return ng;
+    }
+    public double getWeight() {
+	return nw;
+    }
+
+}

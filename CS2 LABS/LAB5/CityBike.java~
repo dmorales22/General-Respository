@@ -1,0 +1,28 @@
+public class CityBike extends Bike {
+
+    private int nB;
+    private String AoD;
+    
+    public void setBrake(String brakeType) {
+	this.AoD = brakeType; 
+    }
+    public void setnumBaskets(int numBaskets) {
+	this.nB = numBaskets;
+    }
+    
+    public String getBrake() {
+	return AoD;
+    }
+    public int getnumBaskets() {
+	return nB;
+    }
+    
+    @Override
+    public void printRecord() {
+	super.printRecord(); 
+	System.out.println("Brake Type: " + this.AoD);
+	System.out.println("Wheel Size: " + this.nB);
+
+    }
+
+}
